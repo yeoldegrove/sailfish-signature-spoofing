@@ -44,7 +44,7 @@ echo [**] 3. Apply the patch
 if [ "${LXC}" -eq 1 ]; then
     API_VERSION=27
     rm -rf /hook
-    /haystack/patch-fileset /haystack/patches/sigspoof-hook-7.0-7.1 ${API_VERSION} /sailfish/framework /hook
+    /haystack/patch-fileset /haystack/patches/sigspoof-hook-7.0-9.0 ${API_VERSION} /sailfish/framework /hook
     rm -rf /hook_core
 
 else
