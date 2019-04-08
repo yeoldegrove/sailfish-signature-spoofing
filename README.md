@@ -60,6 +60,8 @@ Make sure to pass `--env SAILFISH=` with the IP of the phone
 
 Make sure to pass `--env LXC=0` or `--env LXC=1` to choose between android 4.4 (non LXC) and android 8.1 (LXC)
 
+The initial Dockerfile imports openjdk, but it doesnt contain the apt command. First, the openjdk supports yum instead of apt, so replace in the dockerfile the apt with yum. Further, you may want to use a specific openjdk tag, e.g. FROM openjdk:12-jdk-oraclelinux7.
+
 ```bash
 docker build -t haystack . && docker run --rm -ti --env SAILFISH=<PHONE_IP_ADDRESS> --env LXC=0/1 haystack
 ```
