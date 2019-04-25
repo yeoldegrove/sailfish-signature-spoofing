@@ -37,15 +37,15 @@ cat > /root/rsyncd-alien.conf << 'EOF'
 EOF
 ```
 
+* make sure your firewall accepts connections on port 873
+```bash
+iptables -A connman-INPUT -i wlan0 -p tcp -m tcp --dport 873 -j ACCEPT
+```
+
 * run daemon in foreground with logging
 
 ```bash
 rsync --daemon --no-detach --verbose --config=/root/rsyncd-alien.conf --log-file=/dev/stdout
-```
-
-* make sure your firewall accepts connections on port 873
-```bash
-iptables -A connman-INPUT -i wlan0 -p tcp -m tcp --dport 873 -j ACCEPT
 ```
 
 **Build and execute docker image**
@@ -90,5 +90,16 @@ cp -r --reply=yes -v framework.pre_haystack/* framework/
 cp -r --reply=yes -v app.pre_haystack/* app/
 cp -r --reply=yes -v priv-app.pre_haystack/* priv-app/
 ```
+
+**Reverting the changes (Specific to the XA2)**
+===
+* Stop Android Support
+* SSH into your device
+```bash
+devel-su
+cd /opt/alien/
+mv system.img.pre_haystack system.img
+```
+* Start Android Support
 
 
