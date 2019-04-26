@@ -1,6 +1,15 @@
 SailfishOS Android Signature Spoofing for XA2 devices
 ===
 (or other devices using LXC containers for the android runtime)
+
+
+Compatibility
+===
+This only works with Sailfish devices that uses the Android 8.* runtime, e.g. the "Xperia XA2".
+
+If you are using an older Sailfish device, like the "Xperia X" which uses the Android 4.4 runtime, please checkout this: [sailfish-signature-spoofing](https://github.com/vermut/sailfish-signature-spoofing)
+
+How this works
 ===
 
 This is a compiled set of instructions and tools wrapped in Docker image to fetch, deodex, patch and upload back 
@@ -105,5 +114,5 @@ docker build -t sailfish-signature-spoofing-lxc
 
 Kudos
 ===
-The code is based on a fork from the excelent work of @vermut here:
+The code is based on a fork from the excelent work of [rfvermut](https://github.com/rfvermut) here:
  * [sailfish-signature-spoofing](https://github.com/vermut/sailfish-signature-spoofing)
