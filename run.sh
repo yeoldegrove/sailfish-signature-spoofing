@@ -7,7 +7,7 @@ SYSTEM_PATH=system
 
 if [ "${LXC}" -eq 1 ]; then
     echo [**] 1. Fetch files via RSYNC
-    rsync -va \
+    rsync -vaP \
         rsync://${SAILFISH}/alien/system.img \
         /tmp/system.img
   
@@ -21,7 +21,7 @@ if [ "${LXC}" -eq 1 ]; then
   
 else
     echo [**] 1. Fetch files via RSYNC
-    rsync -va --delete \
+    rsync -vaP --delete \
         rsync://${SAILFISH}/alien/${SYSTEM_PATH}/framework \
         rsync://${SAILFISH}/alien/${SYSTEM_PATH}/app       \
         rsync://${SAILFISH}/alien/${SYSTEM_PATH}/priv-app  \
@@ -55,7 +55,6 @@ fi
 echo [**] 4. Merge back the results
 mv -v /hook_core/* /sailfish/framework/
 
-
 if [ "${LXC}" -eq 1 ]; then
     echo [**] 5.1 Merge results back
     rsync -va \
@@ -68,25 +67,28 @@ if [ "${LXC}" -eq 1 ]; then
 #        /sailfish/priv-app/ \
 #        /tmp/squashfs-root/${SYSTEM_PATH}/priv-app/
 
+    echo [**] 5.1.1 Install MicroG Maps API -- mapsv1
+    unzip -d /tmp/squashfs-root/ /mapsv1.flashable.zip  'system/'{etc,framework}'/*'
+
     echo [**] 5.2 rebuild squashfs
     cd /tmp && mksquashfs squashfs-root system.img.haystack -comp lz4 -Xhc -noappend -no-exports -no-duplicates -no-fragments
 
     echo [**] 5. Upload results back
-    rsync -va --delete-after -b --suffix=".pre_haystack" \
+    rsync -vaP --delete-after -b --suffix=".pre_haystack" \
         /tmp/system.img.haystack \
         rsync://${SAILFISH}/alien/system.img
 
 else
     echo [**] 5. Upload results back
-    rsync -va --delete-after -b --backup-dir=../framework.pre_haystack  \
+    rsync -vaP --delete-after -b --backup-dir=../framework.pre_haystack  \
         /sailfish/framework/                                            \
         rsync://${SAILFISH}/alien/${SYSTEM_PATH}/framework
     
-    rsync -va --delete-after -b --backup-dir=../app.pre_haystack  \
+    rsync -vaP --delete-after -b --backup-dir=../app.pre_haystack  \
         /sailfish/app/                                            \
         rsync://${SAILFISH}/alien/${SYSTEM_PATH}/app
     
-    rsync -va --delete-after -b --backup-dir=../priv-app.pre_haystack  \
+    rsync -vaP --delete-after -b --backup-dir=../priv-app.pre_haystack  \
         /sailfish/priv-app/                                            \
         rsync://${SAILFISH}/alien/${SYSTEM_PATH}/priv-app
 fi

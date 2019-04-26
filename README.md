@@ -20,9 +20,11 @@ Instructions
 **Starting Rsync daemon on Sailfish**
 
 * Make sure Android subsystem is stopped
-* Make sure you PC is in connected to the same WiFi network as your phone
-* Figure out your phone's IP address. It's shown in "Developer mode". We will use it later
+* Connect your PC to the phone (either with USB or both connected to the same WiFi network)
 * Enable [developer mode](https://jolla.zendesk.com/hc/en-us/articles/202011863-How-to-enable-Developer-Mode)
+* Figure out your phone's IP address. It's shown in *Settings* -> *Developer tools*. We will use it later
+
+  For USB that is usually 192.168.2.15
 * Open terminal app or connect via SSH
 * Become root by executing `devel-su`
 * Create minimalistic Rsync config
@@ -40,10 +42,12 @@ EOF
 * run daemon in foreground with logging
 
 ```bash
-rsync --daemon --no-detach --verbose --config=/root/rsyncd-alien.conf --log-file=/dev/stdout
+rsync --daemon --no-detach --verbose --address=192.168.2.15 --config=/root/rsyncd-alien.conf --log-file=/dev/stdout
 ```
 
-* make sure your firewall accepts connections on port 873
+If you're not using USB, replace `192.168.2.15` with the address of your device on the corresponding network (see *Settings* -> *Developer tools*)
+
+* make sure your firewall accepts connections on port 873 over Wifi
 ```bash
 iptables -A connman-INPUT -i wlan0 -p tcp -m tcp --dport 873 -j ACCEPT
 ```
@@ -62,7 +66,7 @@ Make sure you checked out all the code from the gut submodules, e.g.:
 git submodule update --init --recursive
 ```
 
-Make sure to pass `--env SAILFISH=` with the IP of the phone
+Make sure to pass `--env SAILFISH=` with the IP of the phone (on USB that would be `192.168.2.15`)
 
 Make sure to pass `--env LXC=0` or `--env LXC=1` to choose between android 4.4 (non LXC) and android 8.1 (LXC)
 
@@ -75,6 +79,16 @@ docker build -t haystack . && docker run --rm -ti --env SAILFISH=<PHONE_IP_ADDRE
 * start Android subsystem (or just run some app). *This will take time, depending on number of apps you have*
 * From that point you can install [microG](https://microg.org/download.html) (nightly) [F-Droid](https://f-droid.org). 
 Don't forget to enable "Unstable updates" from "Expert mode"
+
+
+**Before Sailfish X upgrades with  android 8.1 LXC**
+
+There is not enough free space in `/opt`partition to hold the current (patched) *system.img*, the upgrades and the backup all at the same time.
+
+Either delete the backup from `/opt/alien/system.img.pre_haystack` or move this file to your SD card.
+
+Then don't forget to re-run the patch to patch your new upgraded Android *system.img*.
+
 
 
 Reverting the changes (if needed)
