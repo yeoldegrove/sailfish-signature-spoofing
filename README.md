@@ -24,7 +24,7 @@ Instructions
 * Enable [developer mode](https://jolla.zendesk.com/hc/en-us/articles/202011863-How-to-enable-Developer-Mode)
 * Figure out your phone's IP address. It's shown in *Settings* -> *Developer tools*. We will use it later
 
-  For USB that is usually 192.168.2.15
+  For USB that would usually be 192.168.2.15
 * Open terminal app or connect via SSH
 * Become root by executing `devel-su`
 * Create minimalistic Rsync config
@@ -34,6 +34,8 @@ cat > /root/rsyncd-alien.conf << 'EOF'
 [alien]
  path=/opt/alien
  readonly=false
+ use chroot=true
+ munge symlinks=false
  uid=root
  gid=root 
 EOF
@@ -45,9 +47,15 @@ EOF
 rsync --daemon --no-detach --verbose --address=192.168.2.15 --config=/root/rsyncd-alien.conf --log-file=/dev/stdout
 ```
 
-If you're not using USB, replace `192.168.2.15` with the address of your device on the corresponding network (see *Settings* -> *Developer tools*)
+  If you're using an SSH tunnel, use `--address=127.0.0.1` to retrict the daemon to the tunnel only
 
-* make sure your firewall accepts connections on port 873 over Wifi
+  If you're not using USB, replace `192.168.2.15` with the address of your device on the corresponding network (see *Settings* -> *Developer tools*)
+
+* make you daemon accessible
+
+  * Solution 1: use an `ssh` firewall (see `--end SSH=1` parameter below)
+
+  * Solution 2: make sure your firewall accepts connections on port 873 over Wifi
 ```bash
 iptables -A connman-INPUT -i wlan0 -p tcp -m tcp --dport 873 -j ACCEPT
 ```
@@ -70,8 +78,10 @@ Make sure to pass `--env SAILFISH=` with the IP of the phone (on USB that would 
 
 Make sure to pass `--env LXC=0` or `--env LXC=1` to choose between android 4.4 (non LXC) and android 8.1 (LXC)
 
+If you want to use a SSH tunnel for added security pass `--env SSH=1`.
+
 ```bash
-docker build -t haystack . && docker run --rm -ti --env SAILFISH=<PHONE_IP_ADDRESS> --env LXC=0/1 haystack
+docker build -t haystack . && docker run --rm -ti --env SAILFISH=<PHONE_IP_ADDRESS> --env LXC=0/1 --env SSH=0/1 haystack
 ```
 
 **Final steps**
