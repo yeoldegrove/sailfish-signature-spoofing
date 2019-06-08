@@ -4,3 +4,7 @@
 [submodule "vdexExtractor"]
 	path = vdexExtractor
 	url = https://github.com/anestisb/vdexExtractor
+[submodule "haystack"]
+	path = haystack
+	url = https://github.com/yeoldegrove/haystack
+	branch = unifiednlp
