@@ -57,13 +57,16 @@ rsync -vaP \
 echo -e "\e[34;1m=================================\e[37;1m"
 echo [**] 1.1 unpack the squashfs
 echo -e "\e[34;1m=================================\e[0m"
-cd /tmp && unsquashfs system.img
+mkdir /tmp/system.img.mount
+mount /tmp/system.img /tmp/system.img.mount
+rsync -avPSHAX /tmp/system.img.mount/ /tmp/system.img.new/
+
 
 echo -e "\e[34;1m=================================\e[37;1m"
 echo [**] 1.2 get files to patch
 echo -e "\e[34;1m=================================\e[0m"
 mkdir -p /sailfish
-rsync -va /tmp/squashfs-root/${SYSTEM_PATH}/{framework,app,priv-app} \
+rsync -avPSHAX /tmp/system.img.new/${SYSTEM_PATH}/{framework,app,priv-app} \
   /sailfish
 
 echo -e "\e[34;1m=================================\e[37;1m"
@@ -96,30 +99,23 @@ mv -v /sailfish/hook_unifiednlp/* /sailfish/framework/
 echo -e "\e[34;1m=================================\e[37;1m"
 echo [**] 5.1 Merge results back
 echo -e "\e[34;1m=================================\e[0m"
-rsync -va \
+rsync -avPSHAX \
     /sailfish/framework/services.jar \
-    /tmp/squashfs-root/${SYSTEM_PATH}/framework/
-# rsync -va \
-#     /sailfish/framework/ \
-#     /tmp/squashfs-root/${SYSTEM_PATH}/framework/
-# rsync -va \
-#     /sailfish/app/ \
-#     /tmp/squashfs-root/${SYSTEM_PATH}/app/
-# rsync -va \
-#     /sailfish/priv-app/ \
-#     /tmp/squashfs-root/${SYSTEM_PATH}/priv-app/
+    /tmp/system.img.new/${SYSTEM_PATH}/framework/
 
 if [[ "$NOMAPS" != "1" ]]; then
   echo -e "\e[34;1m=================================\e[37;1m"
   echo [**] 5.1.1 Install MicroG Maps API -- mapsv1
   echo -e "\e[34;1m=================================\e[0m"
-  unzip -d /tmp/squashfs-root/ /mapsv1.flashable.zip  'system/framework/*'
+  unzip -d /tmp/system.img.new/ /mapsv1.flashable.zip  'system/framework/*'
 fi
 
 echo -e "\e[34;1m=================================\e[37;1m"
 echo [**] 5.2 rebuild squashfs
 echo -e "\e[34;1m=================================\e[0m"
-cd /tmp && mksquashfs squashfs-root system.img.haystack -comp lz4 -Xhc -noappend -no-exports -no-duplicates -no-fragments
+cd /tmp && mksquashfs system.img.new system.img.haystack -comp lz4 -Xhc -noappend -no-exports -no-duplicates -no-fragments
+umount /tmp/system.img.mount
+losetup -D
 
 echo -e "\e[34;1m=================================\e[37;1m"
 echo [**] 5. Upload results back

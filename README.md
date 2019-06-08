@@ -79,13 +79,14 @@ git submodule update --init --recursive
 
 Make sure to pass `--env SAILFISH=` with the IP of the phone. `192.168.2.15` aka the USB device IP is set as a default.
 You can pass `--env SSH=1` to use the ssh tunnel mode (no firewall exception needed in SailfishOS)
+`--privileged` is passed so that we can mount the squashfs image as a loop device for the repack.
 
 ```bash
-docker run --rm -ti --env SAILFISH=<PHONE_IP_ADDRESS> yeoldegrove/sailfish-signature-spoofing-lxc
+docker run --rm -ti --privileged --env SAILFISH=<PHONE_IP_ADDRESS> yeoldegrove/sailfish-signature-spoofing-lxc
 
 or
 
-docker run --rm -ti --env SAILFISH=<PHONE_IP_ADDRESS> --env SSH=1 yeoldegrove/sailfish-signature-spoofing-lxc
+docker run --rm -ti --privileged --env SAILFISH=<PHONE_IP_ADDRESS> --env SSH=1 yeoldegrove/sailfish-signature-spoofing-lxc
 
 ```
 
