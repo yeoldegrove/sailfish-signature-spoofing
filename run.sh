@@ -109,22 +109,24 @@ rsync -va \
 #     /sailfish/priv-app/ \
 #     /tmp/squashfs-root/${SYSTEM_PATH}/priv-app/
 
+if [[ "$NOMAPS" != "1" ]]; then
+  echo -e "\e[34;1m=================================\e[37;1m"
+  echo [**] 5.1.1 Install MicroG Maps API -- mapsv1
+  echo -e "\e[34;1m=================================\e[0m"
+  unzip -d /tmp/squashfs-root/ /mapsv1.flashable.zip  'system/framework/*'
+fi
+
 echo -e "\e[34;1m=================================\e[37;1m"
-echo [**] 5.1.1 Install MicroG Maps API -- mapsv1
+echo [**] 5.2 rebuild squashfs
 echo -e "\e[34;1m=================================\e[0m"
-unzip -d /tmp/squashfs-root/ /mapsv1.flashable.zip  'system/framework/*'
+cd /tmp && mksquashfs squashfs-root system.img.haystack -comp lz4 -Xhc -noappend -no-exports -no-duplicates -no-fragments
 
- echo -e "\e[34;1m=================================\e[37;1m"
- echo [**] 5.2 rebuild squashfs
- echo -e "\e[34;1m=================================\e[0m"
- cd /tmp && mksquashfs squashfs-root system.img.haystack -comp lz4 -Xhc -noappend -no-exports -no-duplicates -no-fragments
-
- echo -e "\e[34;1m=================================\e[37;1m"
- echo [**] 5. Upload results back
- echo -e "\e[34;1m=================================\e[0m"
- rsync -vaP --delete-after -b --suffix=".pre_haystack" \
-     /tmp/system.img.haystack \
-     rsync://${SAILFISH}/alien/system.img
+echo -e "\e[34;1m=================================\e[37;1m"
+echo [**] 5. Upload results back
+echo -e "\e[34;1m=================================\e[0m"
+rsync -vaP --delete-after -b --suffix=".pre_haystack" \
+    /tmp/system.img.haystack \
+    rsync://${SAILFISH}/alien/system.img
 
 if (( $SSHTUNNELACTIVE )); then
     : #killall -2 ssh
