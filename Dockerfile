@@ -13,4 +13,6 @@ ADD *.sh ./
 RUN mkdir /sailfish
 
 ENV SAILFISH 192.168.2.15
+# DEBUG
+# CMD ["bash", "-x", "./run.sh"]
 CMD ["bash", "./run.sh"]
