@@ -1,6 +1,3 @@
-[submodule "haystack"]
-	path = haystack
-	url = https://github.com/Lanchon/haystack
 [submodule "simple-deodexer"]
 	path = simple-deodexer
 	url = https://github.com/aureljared/simple-deodexer
