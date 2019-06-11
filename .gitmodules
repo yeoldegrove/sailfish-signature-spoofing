@@ -1,9 +1,10 @@
-[submodule "haystack"]
-	path = haystack
-	url = https://github.com/Lanchon/haystack
 [submodule "simple-deodexer"]
 	path = simple-deodexer
 	url = https://github.com/aureljared/simple-deodexer
 [submodule "vdexExtractor"]
 	path = vdexExtractor
 	url = https://github.com/anestisb/vdexExtractor
+[submodule "haystack"]
+	path = haystack
+	url = https://github.com/yeoldegrove/haystack
+	branch = unifiednlp
